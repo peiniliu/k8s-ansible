@@ -8,7 +8,6 @@ package_root_dir: "{{ workdir }}/pkg"
 cert_root_dir: "{{ workdir }}/ssl"
 
 # 默认 k8s 管理员配置文件路径
-#kube_config_dir: $HOME/.kube
 kube_config_dir: /root/.kube
 
 # etcd 版本
@@ -38,19 +37,16 @@ coredns_image_tag: 1.6.7
 docker_version: 19.03.10
 
 # docker 源地址
-docker_repo: https://download.docker.com/linux/centos/docker-ce.repo 
-#docker_repo: http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+docker_repo: http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 
 # docker 的 cgroupDriver， kubelet 应与 docker 的一致
 cgroupdriver: systemd
 
 # docker 镜像加速器
-mirror_accelerator: https://hub.docker.com/
-#mirror_accelerator: https://ajpb7tdn.mirror.aliyuncs.com
+mirror_accelerator: https://ajpb7tdn.mirror.aliyuncs.com
 
 # docker 存储路径,默认 /var/lib/docker
-#docker_storage_path: "{{ workdir }}/docker"
-docker_storage_path: "/var/lib/docker"
+docker_storage_path: "{{ workdir }}/docker"
 
 # pod 网段
 pod_network: 10.244.0.0/16
@@ -68,13 +64,13 @@ coredns_service_ip: 10.96.0.10
 cluster_domain: cluster.local
 
 # 可访问 api-server 的 VIP|LB|NG 地址，用于生成证书，如果有多个则写多个，以逗号分隔
-apiserver_lb_address: 172.30.0.49
+apiserver_lb_address: 10.10.10.127,lb.5179.top,inner-lb.5179.top
 
 # 如果是高可用集群，需要写一台 VIP|LB|NG 地址，建议写内网 LB 地址，用于生成kubeconfig
-apiserver_master_addr: 172.30.0.49
+apiserver_master_addr: inner-lb.5179.top
 
 # 可以通过 `head -c 16 /dev/urandom | od -An -t x | tr -d ' '`生成token
-bootstrap_token: a2046959c437e41d66121fb765d44454 
+bootstrap_token: d908e9988e51cae3b76ecae1ebacaef3
 
 # service端口范围
 service_port_range: 30000-50000
@@ -91,7 +87,7 @@ eviction_hard_memory: 30Mi
 network_type: calico
 
 # 网卡名称
-network_adapter_name: eno1
+network_adapter_name: ens33
 
 # flannel 网络模式
 flannel_network_mode: vxlan
