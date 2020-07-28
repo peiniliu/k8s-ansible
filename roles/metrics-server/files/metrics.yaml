@@ -83,7 +83,8 @@ spec:
         emptyDir: {}
       containers:
       - name: metrics-server
-        image: registry.cn-beijing.aliyuncs.com/liyongjian5179/metrics-server-amd64:v0.3.6
+        #image: registry.cn-beijing.aliyuncs.com/liyongjian5179/metrics-server-amd64:v0.3.6
+        image: k8s.gcr.io/metrics-server/metrics-server:v0.3.7
         imagePullPolicy: IfNotPresent
         resources:
           limits:
