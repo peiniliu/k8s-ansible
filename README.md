@@ -2,9 +2,26 @@
 
 使用前先根据自身情况修改 `group_vars/all` 和`inventory/hosts`文件
 
+## 安装 ansible 并做免密
+```bash
+# 安装 ansible
+yum install -y ansible
+# 将所有主机信息写入主控机 /etc/hosts 文件，并修改所有机器的主机名
+vim /etc/hosts
+...
+your-ip-1 your-host-name-1
+your-ip-2 your-host-name-2
+your-ip-3 your-host-name-3
+...
+# 每台机器修改主机名
+hostnamectl set-hostname your-host-name-x
+# 免秘钥登陆
+ssh-copy-id root@your-host-ip-or-name-x
+```
+
 ## 使用的版本信息如下
 
-K8S_SERVER_VER=1.18.3
+K8S_SERVER_VER=1.18.8
 
 ETCD_VER=3.4.9
 
@@ -39,8 +56,10 @@ coredns 地址： 10.96.0.10
 | centos7-e     | 10.10.10.132 |       node,flannel       |                      kubelet kube-proxy                      |
 
 ## 注意：
-如果前端有 LB ,选用四层模式，端口 6443，同时将 site.yaml 中第 2-6 行注释。
+如果前端有 LB ,选用四层模式，端口 6443，同时将 site.yaml 中第 2-6 行注释。同时 Masters 中的机器也可以做主控机
+
 如果没有 LB，需要自己准备 Nginx ，尽量单独找一台机器安装 Nginx。
+
 
 ## 提前下载安装包文件
 可以通过执行 `download_binary.sh` 脚本进行包的下载
@@ -56,7 +75,7 @@ wget https://github.com/etcd-io/etcd/releases/download/v${ETCD_VER}/etcd-v${ETCD
 wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64 && \
 wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64 && \
 wget https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64 &&\
-wget https://github.com/projectcalico/calicoctl/releases/download/v{CALICOCTL_VER}/calicoctl
+wget https://github.com/projectcalico/calicoctl/releases/download/v${CALICOCTL_VER}/calicoctl
 ```
 然后执行`tools/move_pkg.sh` 脚本对包进行解压至对应的目录
 ```bash
@@ -90,11 +109,11 @@ ansible-playbook -i inventory/hosts  site.yml -t make_master_labels_and_taints
 ```bash
 [root@centos7-nginx k8s-ansible]# kubectl get nodes
 NAME           STATUS   ROLES    AGE     VERSION
-10.10.10.128   Ready    master   7m48s   v1.18.3
-10.10.10.129   Ready    master   7m49s   v1.18.3
-10.10.10.130   Ready    master   7m49s   v1.18.3
-10.10.10.131   Ready    <none>   7m49s   v1.18.3
-10.10.10.132   Ready    <none>   7m49s   v1.18.3
+10.10.10.128   Ready    master   7m48s   v1.18.8
+10.10.10.129   Ready    master   7m49s   v1.18.8
+10.10.10.130   Ready    master   7m49s   v1.18.8
+10.10.10.131   Ready    <none>   7m49s   v1.18.8
+10.10.10.132   Ready    <none>   7m49s   v1.18.8
 
 [root@centos7-nginx k8s-ansible]# kubectl describe nodes 10.10.10.128 |grep -C 3 Taints
 Annotations:        node.alpha.kubernetes.io/ttl: 0
@@ -105,6 +124,8 @@ Unschedulable:      false
 Lease:
   HolderIdentity:  10.10.10.128
 ```
+> 此处已将 k8s 节点名由原来的 IP 改成 node 的主机名
+
 也可以手动执行
 ```bash
 # 给节点打上 master 角色
@@ -128,6 +149,9 @@ ansible-playbook -i inventory/hosts  site.yml -t cert  -e 'CERT_POLICY=update'
 ## 增加新节点
 
 先在`invertory/hosts`的`[new-nodes]`下增加节点地址  
+
+然后做免秘钥登陆，修改主机名，同时修改主控机`/etc/hosts` 文件，增加该信息
+
 然后执行
 ```bash
 ansible-playbook -i inventory/hosts new_nodes.yml
