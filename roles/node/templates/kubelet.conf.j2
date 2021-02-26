@@ -12,4 +12,5 @@ KUBELET_OPTS="--logtostderr=false \
 --root-dir={{ kubelet_storage_path }} \
 --pod-infra-container-image=gcr.io/google_containers/pause-amd64:3.0 \
 --system-reserved=memory={{ system_reserved_memory }} \
---kube-reserved=memory={{ kube_reserved_memory }}"
+--kube-reserved=memory={{ kube_reserved_memory }} \
+--topology-manager-policy=best-effort"

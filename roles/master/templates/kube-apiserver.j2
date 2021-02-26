@@ -33,4 +33,6 @@ KUBE_APISERVER_OPTS="--logtostderr=false \
 --audit-log-maxbackup=3 \
 --audit-log-maxsize=100 \
 --audit-log-truncate-enabled=true \
---audit-log-path={{ workdir}}/kubernetes/logs/k8s-audit.log"
+--audit-log-path={{ workdir}}/kubernetes/logs/k8s-audit.log \
+--service-account-signing-key-file={{ workdir}}/kubernetes/ssl/ca-key.pem \
+--service-account-issuer=kubernetes.default.svc"

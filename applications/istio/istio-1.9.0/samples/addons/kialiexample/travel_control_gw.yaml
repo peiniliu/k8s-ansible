@@ -1,0 +1,34 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: travel-control-gateway
+  namespace: travel-control
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 15100
+      name: http-travel-control
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: travel-control-vs
+  namespace: travel-control
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - travel-control-gateway
+  http:
+  - match:
+    - port: 15100
+    route:
+    - destination:
+        host: travel-control
+        port:
+          number: 8080 

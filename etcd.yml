@@ -1,0 +1,7 @@
+# 安装 etcd
+- name: Install Etcd Cluster
+  hosts: masters
+  roles:
+    - etcd
+  tags: etcd
+
