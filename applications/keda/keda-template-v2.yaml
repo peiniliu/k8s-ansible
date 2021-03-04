@@ -1,0 +1,14 @@
+apiVersion: keda.sh/v1alpha1                  #  <--- Property value was changed
+kind: ScaledObject
+metadata:                                     #  <--- labels.deploymentName is not needed
+  name: {scaled-object-name}
+spec:
+  scaleTargetRef:
+    name: {deployment-name}                   #  <--- Property name was changed
+    envSourceContainerName: {container-name}  #  <--- Property name was changed   
+  pollingInterval: 30            
+  cooldownPeriod:  300           
+  minReplicaCount: 0             
+  maxReplicaCount: 100           
+  triggers:
+  # {list of triggers to activate the deployment}

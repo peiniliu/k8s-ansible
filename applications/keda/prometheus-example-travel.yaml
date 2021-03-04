@@ -1,0 +1,22 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: prometheus-scaledobject
+  namespace: travel-agency
+spec:
+  scaleTargetRef:
+    name: hotels-v1
+  pollingInterval: 15
+  cooldownPeriod:  30
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+  - type: prometheus
+    metadata:
+      #serverAddress: http://prometheus:9090
+      #serverAddress: http://prometheus.istio-system.svc.cluster.local:9090
+      serverAddress: http://prometheus.istio-system:9090
+      #serverAddress: http://10.107.3.229:9090
+      metricName: istio_requests_total
+      threshold: '1'
+      query: sum(irate(istio_requests_total{connection_security_policy="mutual_tls",destination_service=~"hotels.travel-agency.svc.cluster.local",reporter="destination",destination_workload=~"hotels-v1",destination_workload_namespace=~"travel-agency"}[5m]))
