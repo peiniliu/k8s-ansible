@@ -1,0 +1,34 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: eventsource-gateway
+  namespace: argo-events
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 15101
+      name: eventsource
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: eventsource-vs
+  namespace: argo-events
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - eventsource-gateway
+  http:
+  - match:
+    - port: 15101
+    route:
+    - destination:
+        host: webhook-eventsource-svc
+        port:
+          number: 12000

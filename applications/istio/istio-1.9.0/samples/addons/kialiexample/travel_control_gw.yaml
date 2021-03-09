@@ -29,6 +29,6 @@ spec:
     - port: 15100
     route:
     - destination:
-        host: travel-control
+        host: control
         port:
           number: 8080 
