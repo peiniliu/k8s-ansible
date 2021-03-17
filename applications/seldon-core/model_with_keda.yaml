@@ -1,0 +1,37 @@
+apiVersion: machinelearning.seldon.io/v1
+kind: SeldonDeployment
+metadata:
+  name: seldon-model
+  namespace: seldon-test
+spec:
+  name: test-deployment
+  predictors:
+  - componentSpecs:
+    - spec:
+        containers:
+        - image: seldonio/mock_classifier:1.5.0-dev
+          imagePullPolicy: IfNotPresent
+          name: classifier
+          resources:
+            requests:
+              cpu: '0.5'
+      kedaSpec:
+        pollingInterval: 15                                # Optional. Default: 30 seconds
+        minReplicaCount: 1                                 # Optional. Default: 0
+        maxReplicaCount: 5                                 # Optional. Default: 100
+        triggers:
+        - type: prometheus
+          metadata:
+            #Required
+            serverAddress: http://prometheus.istio-system:9090
+            metricName: access_frequency
+            threshold: '25'
+            query: sum(rate(istio_requests_total{connection_security_policy="mutual_tls",destination_service=~"seldon-model-example.seldon-test.svc.cluster.local",reporter="destination",source_workload=~"locust-slave-1",source_workload_namespace=~"seldon-test"}[5m]))
+#rate(seldon_api_executor_client_requests_seconds_count{seldon_app=~"seldon-model-example"}[1m])
+    graph:
+      children: []
+      endpoint:
+        type: REST
+      name: classifier
+      type: MODEL
+    name: example

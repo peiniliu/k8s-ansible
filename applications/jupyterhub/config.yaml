@@ -1,0 +1,15 @@
+hub:
+  config:
+    Authenticator:
+      admin_users:
+        - admin
+      allowed_users:
+        - peini
+        - gusseppe
+    # ...
+    DummyAuthenticator:
+       password: abc
+    JupyterHub:
+       authenticator_class: dummy
+proxy:
+  secretToken: "327ec52a97051d38020629c1549c32fd1659c0dfeef1b7cd017332627f9c72eb"
